@@ -1,27 +1,507 @@
-#container {
-  text-align: center;
+#containerDate {
+  margin-top: 3rem;
+  padding: 0 1rem 1.25rem;
+  overflow-x: auto;
+}
 
+.credit-card {
+  width: 22rem;
+  height: auto; /* Rendi la card alta abbastanza per contenere gli elementi */
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--customColor1), var(--customColor2));
+  color: white;
+  padding: 1rem;
+  box-shadow: 0px 0.25rem 0.625rem rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+}
+
+.card-name {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start; /* Allinea a sinistra */
+  justify-content: flex-start;
+  margin-top: 1.25rem;
+  position: relative;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-start; /* Allinea a sinistra */
+  width: 100%;
+  margin-top: auto;
+  font-size: 1rem;
+}
+
+.card-saldo {
+  font-size: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: bolder;
+}
+
+.value {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+#annoTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0 1rem;
+  border-radius: 8rem;
+  box-shadow: 0px 0.25rem 0.625rem rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, var(--customColor1), var(--customColor2));
+}
+
+#annoTitle ion-title {
+  letter-spacing: 0.6rem;
+}
+
+#annoTitle div {
+  margin-top: 0.3rem;
+}
+
+#annoTitle div ion-icon {
+  margin: 0 0.5rem;
+  padding: 0.8rem !important;
+  width: 2rem !important;
+}
+
+.frecceMese ion-icon, .frecceMese ng-template ion-icon {
+  background-color: white !important;
+  color: black !important;
+  width: 0.1rem !important;
+  height: 1rem !important;
+}
+
+.mese-container {
+  margin-bottom: 1.25rem;
+  border-radius: 0.8rem;
+  border: none !important;
+}
+
+.meseTitle {
+  border-radius: 0.8rem;
+  margin: 0.6rem 0;
+  --ion-item-background: linear-gradient(135deg,var(--customColor1),var(--customColor2)) !important;
+}
+
+.riepilogo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+.riepilogo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.riepilogo-titolo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.6rem;
+}
+
+.riepilogo-chips {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+ion-list {
+  height: auto; /* Rendi la card alta abbastanza per contenere gli elementi */
+  border-radius: 1rem;
+  color: white;
+  box-shadow: 0px 0.25rem 0.625rem rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  gap: 0.3rem;
+  padding-bottom: 1rem;
+}
+
+ion-list ion-item {
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
+  border-radius: 30rem;
+  min-height: 4rem !important;
+  height: 100% !important;
+  --background: var(--backgroundDarkColor2) !important;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  --inner-border-width: 0px;
+  margin-left: 0.8rem !important;
+  margin-right: 0.8rem !important;
+}
+
+.scrollable-segment {
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.scrollable-segment ion-segment-button {
+  flex-shrink: 0;
+  color: white;
+  --indicator-color: none;
+  //--background: var(--backgroundDarkColor);
+  --background: var(--customColor2) !important;
+  //--background-checked: white;
+  --background-checked: var(--customColor1) !important;
+  margin: 0.5rem;
+  border-radius: 100%;
+  font-weight: bold;
+  width: 3rem !important;
+  height: 3rem !important;
+  min-width: 3rem !important;
+  min-height: 3rem !important;
+  padding: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 0.18rem 0.4rem rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.scrollable-segment ion-label.nomeMeseSegment {
+  font-size: 0.8rem;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  position: fixed;
+}
+
+/*.segment-button-checked ::ng-deep {
+  color: var(--backgroundDarkColor) !important;
+}*/
+
+.scrollable-segment::-webkit-scrollbar {
+  display: none;
+}
+
+.chip-money {
+  font-size: 1rem;
+  padding: 0.8rem 1.2rem;
+  margin: 0 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+ion-chip {
+  border-radius: 2rem;
+}
+
+ion-icon {
+  margin-right: 0.5rem;
+}
+
+.ionItemSpese {
+  background: var(--backgroundDarkColor2) !important;
+}
+
+.disabled {
+  opacity: 50%;
+}
+
+.chipCategory {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.buttonsCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem; /* Spaziatura tra i bottoni */
+  margin-top: 1rem; /* Distanza dal contenuto sopra */
+}
+
+.buttonsCard div {
+  background-color: white;
+  border-radius: 100%;
+  width: 3.5rem;
+  height: 3.5rem;
+  text-align: center;
+  color: var(--bs-danger);;
+  display: flex; /* Usa flexbox */
+  justify-content: center; /* Allinea orizzontalmente */
+  align-items: center; /* Allinea verticalmente */
+}
+
+.capsule-card {
+  background-color: var(--backgroundDarkColor);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 9.5rem;
+  height: 2.8rem;
+  gap: 2rem;
+  position: relative; /* Permette ai figli di usare position absolute */
+  overflow: hidden; /* Evita che il contenuto esca fuori */
+}
+
+.icon-absolute {
   position: absolute;
-  left: 0;
-  right: 0;
   top: 50%;
   transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.icon-absolute.left {
+  left: 0.4rem; /* Regola la posizione a sinistra */
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+.icon-absolute.right {
+  right: 0.4rem; /* Regola la posizione a destra */
 }
 
-#container a {
-  text-decoration: none;
+.saldo-absolute {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.saldo-absolute .label {
+  color: white !important;
+  opacity: 100%;
+  font-size: 0.6rem;
+}
+
+.saldo-absolute .valoreSaldo {
+  font-size: 1rem;
+}
+
+.guadagni {
+  left: 2.5rem;
+}
+
+.perdite {
+  right: 2.5rem;
+}
+
+.fabAggiungiAzione {
+  --background: linear-gradient(135deg, var(--customColor1), var(--customColor2));
+  --color: white;
+}
+
+/* STILE FORM AGGIUNGI AZIONE */
+.labelForm {
+  --padding-bottom: 5rem;
+  margin-bottom: 2rem !important;
+  margin-left: 0.5rem !important;
+}
+
+.labelFormCategoria {
+  --padding-bottom: 5rem;
+  margin-bottom: 1.6rem !important;
+}
+
+ion-modal {
+  --background: var(--backgroundDarkColor) !important;
+}
+
+.formAggiungi {
+  position: absolute;
+  width: 100%;
+  top: 8% !important;
+}
+
+.formAggiungi ion-item {
+  margin-left: 0.8rem !important;
+  margin-right: 0.8rem !important;
+  border-radius: 30rem;
+  min-height: 4rem !important;
+  height: 100% !important;
+  --background: var(--backgroundDarkColor) !important;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  --inner-border-width: 0px;
+}
+
+.formAggiungi ion-item input {
+  background: var(--backgroundDarkColor2) !important;
+  border-radius: 50rem !important;
+  padding: 1.3rem 2rem;
+  border: 2px solid transparent; /* Border iniziale trasparente */
+  color: white;
+  transition: border 0.1s ease-in-out; /* Animazione fluida */
+}
+
+.formAggiungi ion-item input:focus {
+  border: 2px solid white !important; /* Cambia il bordo a bianco quando è in focus */
+}
+
+/* Stile per il bottone */
+.btnForm {
+  background: linear-gradient(135deg, var(--customColor1), var(--customColor2)) !important;
+  --background: none;
+  --box-shadow: none;
+  border-radius: 50rem !important;
+  padding: 0.8rem 2rem;
+  border: none;
+  color: white;
+  font-weight: bold;
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+/* Stile per il gruppo di radio button */
+.radio-group {
+  display: flex;
+  justify-content: center;
+  padding: 0 0.5rem;
+  margin-left: 0rem !important;
+  margin-right: 0rem !important;
+  margin-top: 0rem !important;
+}
+
+/* Stile base dei radio button */
+.radio-button {
+  flex: 1;
+  text-align: center;
+  border-radius: 50px;
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  border: 2px solid transparent;
+}
+
+/* Nasconde il radio input */
+.radio-button input[type="radio"] {
+  display: none;
+}
+
+.entrataBtn {
+  border-color:  var(--bs-success);
+  color:  var(--bs-success);
+  margin-right: 1.3rem;
+}
+
+.uscitaBtn {
+  border-color:  var(--bs-danger);
+  color:  var(--bs-danger);
+}
+
+/* Quando il radio è selezionato, cambia solo lo stile di uscitaBtn */
+.uscitaBtn:has(input[type="radio"]:checked) {
+  background-color: var(--bs-danger) !important;
+  color: white !important;
+}
+
+.entrataBtn:has(input[type="radio"]:checked) {
+  background-color: var(--bs-success) !important;
+  color: white !important;
+}
+
+/* Stile dei radio button CATEGORIE */
+.radio-buttonCategorie {
+  flex: 1;
+  max-width: 3.5rem; /* Imposta una larghezza fissa per l'elemento */
+  height: 3.5rem; /* Imposta un'altezza uguale alla larghezza per la forma rotonda */
+  text-align: center;
+  border-radius: 50%; /* Bordo rotondo */
+  padding: 0;
+  font-weight: bold;
+  font-size: 0.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  border: 2px solid transparent; /* Imposta il bordo inizialmente trasparente */
+  margin-right: 0.8rem;
+}
+
+/* Rimuovi il margine per l'ultimo elemento, se necessario */
+.radio-buttonCategorie:last-child {
+  margin-right: 0;
+}
+
+/* Nasconde il radio input */
+.radio-buttonCategorie input[type="radio"] {
+  display: none;
+}
+
+/* Stile per l'icona all'interno del radio button */
+.radio-buttonCategorie ion-icon {
+  font-size: 1.5rem; /* Imposta la dimensione dell'icona */
+  color: var(--ion-color-dark); /* Colore dell'icona, puoi personalizzarlo */
+  transition: color 0.3s;
+}
+
+/* Effetti di transizione quando selezionato */
+.radio-buttonCategorie {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.radio-buttons-container {
+  display: flex; /* Rende orizzontale il gruppo di radio buttons */
+  flex-wrap: wrap; /* Consente ai bottoni di andare a capo se necessario */
+  align-items: center;
+  justify-content: center;
+  flex: 1;  
+  width: 100%;
+  margin-top: 0.5rem;
 }

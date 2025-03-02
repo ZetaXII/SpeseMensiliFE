@@ -1,20 +1,158 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <h1 class="text-left fw-bold px-3 mt-4">Bentornato! 👋🏻</h1>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="container d-flex justify-content-center pt-3">
+    <div class="credit-card">
+      <div class="card-saldo text-start">
+        <span class="label">Saldo Totale</span>
+        <span class="value fw-bold" style="font-size: 2rem;">
+          {{ totali.saldo | currency:'EUR':'symbol':'1.2-2' }}
+        </span>
+      </div>
+
+      <div class="d-flex gap-3 justify-content-center position-relative mt-2">
+        <div class="capsule-card position-relative">
+          <div class="icon-container bg-success text-white icon-absolute left">
+            <ion-icon name="arrow-up" class="ms-2"></ion-icon>
+          </div>
+          <div class="saldo text-success saldo-absolute guadagni text-start ps-2">
+            <span class="label fw-bold">Guadagni</span>
+            <span class="valoreSaldo">+{{ totali.totaleEntrate | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <div class="capsule-card position-relative">
+          <div class="icon-container bg-danger text-white icon-absolute right">
+            <ion-icon name="arrow-down" class="ms-2"></ion-icon>
+          </div>
+          <div class="saldo text-danger saldo-absolute perdite text-end pe-2">
+            <span class="label fw-bold">Perdite</span>
+            <span class="valoreSaldo">-{{ totali.totaleUscite | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <div id="containerDate">
+    <div id="annoTitle" class="d-flex justify-content-center align-items-center text-center mx-5 mb-3 py-1">
+      <div  class="frecceMese">
+        <ion-icon name="chevron-back" (click)="changeAnno(-1)" style="width: 1rem !important; height: 1rem !important; background-color: white; color: var(--backgroundDarkColor)black; border-radius: 50%;"></ion-icon>
+      </div>
+
+      <ion-title size="large" class="fw-bold fs-4">{{ currentYear }}</ion-title>
+
+      <div class="frecceMese">
+        <ion-icon *ngIf="currentYear < thisYear; else disabledChevron" name="chevron-forward" (click)="changeAnno(+1)" style="width: 1rem !important; height: 1rem !important; background-color: white; color: var(--backgroundDarkColor); border-radius: 50%;"></ion-icon>
+        <ng-template #disabledChevron class="frecceMese">
+          <ion-icon name="chevron-forward" class="disabled" style="width: 1rem !important; height: 1rem !important; background-color: white; color: var(--backgroundDarkColor); border-radius: 50%;"></ion-icon>
+        </ng-template>        
+      </div>
+    </div>
+  </div>
+
+  <ion-segment [value]="meseSelezionato" (ionChange)="selezionaMese($event)" class="scrollable-segment py-3 mb-1">
+    <ng-container *ngFor="let mese of meseList">
+      <ion-segment-button *ngIf="mese.spese && mese.spese.length > 0" [value]="mese.numeroMese + '-' + mese.anno">
+        <ion-label class="nomeMeseSegment">{{ mese.nomeMese.substring(0,3) }}</ion-label>
+      </ion-segment-button>
+    </ng-container>
+  </ion-segment>
+
+  <div *ngFor="let mese of meseList; let i = index">
+    <div *ngIf="meseSelezionato === (mese.numeroMese + '-' + mese.anno)">
+      <ion-list *ngIf="mese.spese && mese.spese.length > 0; else noSpese" class="mt-1 mb-5"><!--style="background-color: transparent !important;"-->
+        <h1 class="p-3 fw-bold fs-3">Riepilogo</h1>
+
+        <ion-item *ngFor="let spesa of mese.spese; let i = index" class="ionItemSpese my-1">
+          <ion-chip class="chipCategory me-3" [ngStyle]="{'background-color': getCategoriaInfo(spesa.categoria).colore, 'color': 'white'}">
+            <ion-icon class="me-2" [name]="getCategoriaInfo(spesa.categoria).icona"></ion-icon>
+          </ion-chip>
+          <ion-label>
+            <h4>{{ spesa.azione }}</h4>
+            <p>{{ spesa.nomeGiorno }} {{ spesa.numeroGiorno }}</p>
+          </ion-label>
+        
+          <ion-chip color="success" *ngIf="spesa.entrata">+{{ spesa.entrata | currency:'EUR':'symbol':'1.2-2' }}</ion-chip>
+          <ion-chip color="danger" *ngIf="spesa.uscita">-{{ spesa.uscita | currency:'EUR':'symbol':'1.2-2' }}</ion-chip>
+
+          <!-- Pulsante per aprire il popover -->
+          <ion-icon name="ellipsis-vertical-sharp" (click)="openPopover($event, spesa)" class="ms-2 fs-5"></ion-icon>          
+        </ion-item>
+        
+      </ion-list>
+      <ng-template #noSpese>
+        <!--<p class="text-muted">Nessuna spesa registrata</p>-->
+      </ng-template>
+    </div>
+  </div>
+  
+  <!-- PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed" (click)="setOpen(true)">
+    <ion-fab-button class="fabAggiungiAzione text-center">
+      <ion-icon name="add" class="ms-2 fs-1"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuova Spesa</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen(false)">Chiudi</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+  
+      <form [formGroup]="formAggiungi" (ngSubmit)="submitForm()" class="formAggiungi">
+        
+        <!-- NOME AZIONE --> 
+        <ion-item>
+          <ion-label position="floating" class="labelForm">Nome Azione</ion-label>
+          <input type="text" formControlName="azione" class="form-control" [maxlength]="42">
+        </ion-item>
+
+        <!-- ENTRATA / USCITA --> 
+        <ion-item class="radio-group">
+          <label class="radio-button entrataBtn">
+            <input type="radio" formControlName="tipo" value="entrata">
+            <span>Entrata</span>
+          </label>
+        
+          <label class="radio-button uscitaBtn">
+            <input type="radio" formControlName="tipo" value="uscita">
+            <span>Uscita</span>
+          </label>
+        </ion-item>        
+        
+        <!-- IMPORTO AZIONE --> 
+        <ion-item>
+          <ion-label position="floating" class="labelForm">Importo</ion-label>
+          <input type="number" formControlName="importo" step="0.01" class="form-control">
+        </ion-item>
+
+        <!-- CATEGORIA AZIONE --> 
+        <ion-item class="radio-group radio-groupCategorie">
+          <ion-label position="floating" class="labelFormCategoria">Categoria</ion-label>
+          <div class="radio-buttons-container">
+            <label *ngFor="let categoria of categorie" class="radio-buttonCategorie" 
+              [ngStyle]="{'border-color': categoria.colore, 'background-color': selectedCategory === categoria.nome ? categoria.colore : ''}">
+              <input type="radio" formControlName="categoria" [value]="categoria.nome" (change)="onCategoryChange(categoria)">
+              <span>
+                <ion-icon class="ms-2" [name]="categoria.icona"></ion-icon>
+              </span>
+            </label>
+          </div>
+        </ion-item>
+        
+           
+  
+        <ion-button expand="full" type="submit" [disabled]="formAggiungi.invalid" class="btnForm mt-5">Aggiungi</ion-button>
+      </form>
+    </ng-template>
+  </ion-modal>
+  
+  <!-- FINE PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
+
 </ion-content>

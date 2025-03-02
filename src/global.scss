@@ -35,3 +35,15 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+// IMPORT BOOTSTRAP
+@import "node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "node_modules/bootstrap-icons/font/bootstrap-icons.css";
+// FONT INTER
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700&display=swap');
+
+:root {
+    font-family: 'Inter', sans-serif !important;
+    --ion-font-family: 'Inter', sans-serif !important;
+    //--ion-background-color: linear-gradient(135deg, var(--customColor2), var(--customColor2)) !important;
+    --ion-background-color: var(--backgroundDarkColor2) !important;
+}
