@@ -2,8 +2,7 @@
   <!-- PER LO SPINNER DEL CARICAMENTO -->
   <ion-loading [isOpen]="isLoading" message="Caricamento..." spinner="crescent"></ion-loading>
 
-  <div class="background-overlay"></div>
-  <div class="d-flex align-items-center justify-content-between px-3 mt-4">
+  <div class="d-flex align-items-center justify-content-between px-3 mt-5 pt-3">
     <h1 class="fw-bold fs-2 mb-0">Ciao, {{nomeUtente}}! 👋🏻</h1>
     <div class="d-flex align-items-center">
       <!-- ALERT PER LA RICERCA -->
@@ -283,7 +282,7 @@
   </div>
   
   <!-- PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
-  <ion-fab horizontal="end" vertical="bottom" slot="fixed" (click)="isUpdateForm=false; setOpen(true)">
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed" class="me-2 mb-1" (click)="isUpdateForm=false; setOpen(true)">
     <ion-fab-button class="fabAggiungiAzione text-center">
       <ion-icon name="add" class="ms-2 fs-1"></ion-icon>
     </ion-fab-button>
