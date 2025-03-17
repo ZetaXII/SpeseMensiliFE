@@ -1,8 +1,42 @@
 :root {
-    --backgroundDarkColor: #1E1E1E;
-    //--backgroundDarkColor2: #252525;
-    --backgroundDarkColor2: #181818;
-    --backgroundDarkColor3: #3131319d;
-    --customColor1: #7abe5f;
-    --customColor2: #17805d;  
-  }
+  --backgroundDarkColor: #1E1E1E;        /* Grigio scuro */
+  --backgroundDarkColor2: #181818;       /* Grigio più scuro */
+  --backgroundDarkColor3: #3131319d;     /* Grigio trasparente */
+  
+  /* Colori personalizzati per il tema grigio (default) */
+  --customColor1: #7f8c8d;  /* Grigio chiaro */
+  --customColor2: #444c4d;  /* Grigio medio */
+}
+
+  
+/* Tema Verde */
+.verde-theme {
+  --customColor1: #7abe5f;
+  --customColor2: #17805d;
+}
+
+/* Tema Verde Militare */
+.militare-theme {
+  --customColor1: #588157;
+  --customColor2: #344e41;
+}
+
+/* Tema Lilla */
+.lilla-theme {
+  --customColor1: #b8b8ff;
+  --customColor2: #9381ff;
+}
+
+/* Tema AzzurLilla */
+.azzurlilla-theme {
+  --customColor1: #b8c0ff;
+  --customColor2: #6a89cc;
+}
+
+/* Tema Fashion */
+.fashion-theme {
+  --customColor1: #f4acb7;
+  --customColor2: #461220;
+}
+
+  

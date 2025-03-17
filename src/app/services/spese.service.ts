@@ -25,7 +25,8 @@ export interface Totali {
 })
 export class SpeseService {
   // HOSTING BACKEND: https://dashboard.render.com/web/srv-cuscehhopnds7399mnm0
-  // BOT PER TENERE HOSTATO IL BACKEND: https://dashboard.uptimerobot.com/monitors/798667489
+  // BOT PER TENERE HOSTATO IL BACKEND: https://dashboard.uptimerobot.com/monitors/798667489 -- V1 (NON FUNZIONA BENE)
+  // BOT PER TENERE HOSTATO IL BACKEND: https://uptime.betterstack.com/team/306632/monitors/3058965 -- V2
   // HOSTING DB: https://supabase.com/dashboard/project/kfriuurrgdbzzbsjncwn/editor/49212?schema=public
   private readonly API_URL = 'https://spesemensilibe.onrender.com/api/azioni';
   private readonly USER = 'MARIO';

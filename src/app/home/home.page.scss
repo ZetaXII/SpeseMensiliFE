@@ -1,7 +1,24 @@
 #containerDate {
-  margin-top: 3rem;
+  margin-top: 2.7rem;
   padding: 0 1rem 1.25rem;
   overflow-x: auto;
+}
+
+ion-content {
+  --background: var(--backgroundDarkColor); /* Rimuove lo sfondo nativo */
+  position: relative;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  //background: url("https://i.pinimg.com/736x/5e/2e/fb/5e2efb835b115cd5ccda811eab9afa7b.jpg") no-repeat center center / cover;
+  background: var(--backgroundDarkColor); /* Rimuove lo sfondo nativo */
+  filter: blur(8px) /*grayscale(100%)*/;
+  z-index: -1;
 }
 
 .credit-card {
@@ -150,11 +167,16 @@ ion-list {
   z-index: 2;
   gap: 0.3rem;
   padding-bottom: 1rem;
+  background-color: transparent !important;
+  border: none;
+  box-shadow: none;
 }
 
-ion-list ion-item {
-  margin-left: 0.6rem;
-  margin-right: 0.6rem;
+.ionItemSpese {
+  background: var(--backgroundDarkColor2) !important;
+}
+
+ion-list .ionItemSpese {
   border-radius: 30rem;
   min-height: 4rem !important;
   height: 100% !important;
@@ -166,6 +188,18 @@ ion-list ion-item {
   margin-right: 0.8rem !important;
 }
 
+.ionItemRiepilogoSpese {
+  //background: linear-gradient(135deg, var(--customColor1), var(--customColor2)) !important;
+  background: none !important;
+}
+
+ion-list .ionItemRiepilogoSpese {
+  border-radius: 30rem;
+  min-height: 4rem !important;
+  height: 100% !important;
+  --background: none !important;
+  --inner-border-width: 0px;
+}
 .scrollable-segment {
   overflow-x: auto;
   white-space: nowrap;
@@ -212,6 +246,28 @@ ion-list ion-item {
   position: fixed;
 }
 
+ion-item.ionItemSpese {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  ion-label {
+    flex: 1 1 auto; // Permette al testo di adattarsi
+    word-break: break-word; // Permette di andare a capo su parole lunghe
+    white-space: normal; // Testo a capo
+  }
+
+  .chipCategory {
+    flex-shrink: 0; // Evita che si riduca
+  }
+
+  ion-chip {
+    flex-shrink: 0; // Mantiene la dimensione dei chip
+  }
+}
+
+
 /*.segment-button-checked ::ng-deep {
   color: var(--backgroundDarkColor) !important;
 }*/
@@ -234,10 +290,6 @@ ion-chip {
 
 ion-icon {
   margin-right: 0.5rem;
-}
-
-.ionItemSpese {
-  background: var(--backgroundDarkColor2) !important;
 }
 
 .disabled {
@@ -355,13 +407,20 @@ ion-modal {
   --background: var(--backgroundDarkColor) !important;
 }
 
-.formAggiungi {
+.formAggModAzione {
   position: absolute;
   width: 100%;
-  top: 8% !important;
 }
 
-.formAggiungi ion-item {
+.formAggModAzioneTOP {
+  top: 10% !important;
+}
+
+.formSearchTOP {
+  top: 1% !important;
+}
+
+.formAggModAzione ion-item {
   margin-left: 0.8rem !important;
   margin-right: 0.8rem !important;
   border-radius: 30rem;
@@ -373,7 +432,7 @@ ion-modal {
   --inner-border-width: 0px;
 }
 
-.formAggiungi ion-item input {
+.formAggModAzione ion-item input, .formAggModAzione ion-item select {
   background: var(--backgroundDarkColor2) !important;
   border-radius: 50rem !important;
   padding: 1.3rem 2rem;
@@ -382,7 +441,7 @@ ion-modal {
   transition: border 0.1s ease-in-out; /* Animazione fluida */
 }
 
-.formAggiungi ion-item input:focus {
+.formAggModAzione ion-item input:focus {
   border: 2px solid white !important; /* Cambia il bordo a bianco quando è in focus */
 }
 
@@ -504,4 +563,32 @@ ion-modal {
   flex: 1;  
   width: 100%;
   margin-top: 0.5rem;
+}
+
+.modalHeader {
+  border: none;
+  box-shadow: none;
+  font-weight: bold;
+}
+
+.modalContent {
+  overflow-y: auto;  // Abilita lo scroll verticale
+  padding-bottom: 5rem !important;
+}
+
+.btnNuovaRicerca {
+  border-radius: 2rem !important; 
+  color: white !important; 
+  gap: 0.5rem; 
+  border: none;
+}
+
+ion-loading {
+  border-radius: 3rem;
+  --spinner-color: var(--customColor1);
+  --background: var(--backgroundDarkColor2);
+  border-radius: 1rem !important; 
+  overflow: hidden !important; 
+  background-color: var(--backgroundDarkColor3); 
+  padding: 10px;  
 }
