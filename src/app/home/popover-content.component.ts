@@ -59,10 +59,10 @@ export class PopoverContentComponent {
     let tipo = null;
     let importo = 0;
   
-    if (this.spesa.entrata != null && this.spesa.uscita == null) {
+    if (this.spesa.entrata != null && (this.spesa.uscita == null || this.spesa.uscita == 0)) {
       tipo = "entrata";
       importo = this.spesa.entrata;
-    } else if (this.spesa.uscita != null && this.spesa.entrata == null) {
+    } else if (this.spesa.uscita != null && (this.spesa.entrata == null || this.spesa.entrata == 0)) {
       tipo = "uscita";
       importo = this.spesa.uscita;
     }
