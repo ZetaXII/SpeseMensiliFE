@@ -3,6 +3,8 @@ html,
 body {
   height: 100%;
   overflow-y: auto;
+  --ion-color: white !important;
+  color: white !important;  
 }
 
 #containerDate {
@@ -14,6 +16,8 @@ body {
 ion-content {
   --background: var(--backgroundDarkColor); /* Rimuove lo sfondo nativo */
   position: relative;
+  --ion-color: white !important;
+  color: white !important;  
 }
 
 .credit-card {

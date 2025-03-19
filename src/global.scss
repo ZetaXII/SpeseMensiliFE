@@ -35,6 +35,7 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+@import '@ionic/angular/css/palettes/dark.always.css';
 // IMPORT BOOTSTRAP
 @import "node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "node_modules/bootstrap-icons/font/bootstrap-icons.css";
@@ -46,4 +47,6 @@
     --ion-font-family: 'Inter', sans-serif !important;
     //--ion-background-color: linear-gradient(135deg, var(--customColor2), var(--customColor2)) !important;
     --ion-background-color: var(--backgroundDarkColor2) !important;
+    --ion-color: white !important;
+    color: white !important;
 }
