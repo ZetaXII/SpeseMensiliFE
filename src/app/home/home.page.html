@@ -1,354 +1,658 @@
 <ion-content [fullscreen]="true">
-  <!-- PER LO SPINNER DEL CARICAMENTO -->
-  <ion-loading [isOpen]="isLoading" message="Caricamento..." spinner="crescent"></ion-loading>
+  <!-- Ion Refresher -->
+  <ion-content class="ion-padding">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content
+        pullingIcon="arrow-down-outline"
+        pullingText="Tira per aggiornare!"
+        refreshingSpinner="crescent"
+      >
+      </ion-refresher-content>
+    </ion-refresher>
 
-  <div class="d-flex align-items-center justify-content-between px-3 mt-5 pt-3">
-    <h1 class="fw-bold fs-2 mb-0">Ciao, {{nomeUtente}}! 👋🏻</h1>
-    <div class="d-flex align-items-center">
-      <!-- ALERT PER LA RICERCA -->
-      <ion-icon name="search" class="fs-1 me-3" (click)="openSearchModal()"></ion-icon>      
-      <ion-icon name="settings-sharp" class="fs-1" (click)="openSettingsModal()"></ion-icon>
+    <!-- PER LO SPINNER DEL CARICAMENTO -->
+    <ion-loading
+      [isOpen]="isLoading"
+      message="Caricamento..."
+      spinner="crescent"
+    ></ion-loading>
+
+    <div
+      class="d-flex align-items-center justify-content-between px-3 mt-5 pt-3"
+    >
+      <h1 class="fw-bold fs-2 mb-0">Ciao, {{nomeUtente}}! 👋🏻</h1>
+      <div class="d-flex align-items-center">
+        <!-- ALERT PER LA RICERCA -->
+        <ion-icon
+          name="search"
+          class="fs-1 me-3"
+          (click)="openSearchModal()"
+        ></ion-icon>
+        <ion-icon
+          name="settings-sharp"
+          class="fs-1"
+          (click)="openSettingsModal()"
+        ></ion-icon>
+      </div>
     </div>
-  </div>
 
-  <!-- ###########################  MODALE DI RICERCA  ############################################## -->
-  <ion-modal [isOpen]="isModalSearchOpen" (ionModalDidDismiss)="closeSearchModal()">
-    <ng-template>
-      <ion-header class="modalHeader">
-        <ion-toolbar>
-          <ion-title>Ricerca Spese</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeSearchModal()">Chiudi</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-  
-      <ion-content class="modalContent">
-        <form [formGroup]="formRicercaSpese" (ngSubmit)="submitSearch()" class="formAggModAzione formSearchTOP" *ngIf="speseSearchResult.length<=0">
-    
-          <!-- AZIONE -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Azione</ion-label>
-            <input type="text" formControlName="azione" class="form-control">
-          </ion-item>
+    <!-- ###########################  MODALE DI RICERCA  ############################################## -->
+    <ion-modal
+      [isOpen]="isModalSearchOpen"
+      (ionModalDidDismiss)="closeSearchModal()"
+    >
+      <ng-template>
+        <ion-header class="modalHeader">
+          <ion-toolbar>
+            <ion-title>Ricerca Spese</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeSearchModal()">Chiudi</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
 
-          <!-- IMPORTO -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Importo</ion-label>
-            <input type="number" formControlName="importo" step="0.01" class="form-control">
-          </ion-item>          
-    
-          <!-- CATEGORIA -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Categoria</ion-label>
-            <select formControlName="categoria" class="form-control">
-              <option *ngFor="let cat of categorie" [value]="cat.nome">
-                {{ cat.nome }}
-              </option>
-            </select>
-          </ion-item>
-    
-          <!-- NOME GIORNO -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Giorno della Settimana</ion-label>
-            <select formControlName="nomeGiorno" class="form-control">
-              <option value="LUN">Lunedì</option>
-              <option value="MAR">Martedì</option>
-              <option value="MER">Mercoledì</option>
-              <option value="GIO">Giovedì</option>
-              <option value="VEN">Venerdì</option>
-              <option value="SAB">Sabato</option>
-              <option value="DOM">Domenica</option>
-            </select>
-          </ion-item>
-    
-          <!-- NUMERO GIORNO -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Giorno del Mese</ion-label>
-            <select formControlName="numeroGiorno" class="form-control">
-              <option *ngFor="let num of giorniSearch" [value]="num">{{ num }}</option>
-            </select>
-          </ion-item>
-    
-          <!-- MESE -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Mese</ion-label>
-            <select formControlName="mese" class="form-control">
-              <option *ngFor="let mese of mesiSearch" [value]="mese.valore">{{ mese.nome }}</option>
-            </select>
-          </ion-item>            
-    
-          <!-- ANNO -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Anno</ion-label>
-            <select formControlName="anno" class="form-control">
-              <option *ngFor="let anno of anniSearch" [value]="anno">{{ anno }}</option>
-            </select>
-          </ion-item>          
-    
-          <ion-button expand="full" type="submit" class="btnForm my-5">
-            Cerca
-          </ion-button>
-        </form>
-        <br/>
-        <div *ngIf="speseSearchResult.length>0" class="searchItems">
-          <div class="d-flex justify-content-between align-items-center me-3">
-            <span class="ms-3">Trovate <span class="fw-bold">{{speseSearchResult.length}}</span> azioni</span>
-            <button (click)="resetSearch()" class="bg-primary p-1 px-3 d-flex align-items-center justify-content-center btnNuovaRicerca">
-              Nuova ricerca
-            </button>
+        <ion-content class="modalContent">
+          <form
+            [formGroup]="formRicercaSpese"
+            (ngSubmit)="submitSearch()"
+            class="formAggModAzione formSearchTOP"
+            *ngIf="speseSearchResult.length<=0"
+          >
+            <!-- AZIONE -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Azione</ion-label
+              >
+              <input
+                type="text"
+                formControlName="azione"
+                class="form-control"
+              />
+            </ion-item>
+
+            <!-- IMPORTO -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Importo</ion-label
+              >
+              <input
+                type="number"
+                formControlName="importo"
+                step="0.01"
+                class="form-control"
+              />
+            </ion-item>
+
+            <!-- CATEGORIA -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Categoria</ion-label
+              >
+              <select formControlName="categoria" class="form-control">
+                <option *ngFor="let cat of categorie" [value]="cat.nome">
+                  {{ cat.nome }}
+                </option>
+              </select>
+            </ion-item>
+
+            <!-- NOME GIORNO -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Giorno della Settimana</ion-label
+              >
+              <select formControlName="nomeGiorno" class="form-control">
+                <option value="LUN">Lunedì</option>
+                <option value="MAR">Martedì</option>
+                <option value="MER">Mercoledì</option>
+                <option value="GIO">Giovedì</option>
+                <option value="VEN">Venerdì</option>
+                <option value="SAB">Sabato</option>
+                <option value="DOM">Domenica</option>
+              </select>
+            </ion-item>
+
+            <!-- NUMERO GIORNO -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Giorno del Mese</ion-label
+              >
+              <select formControlName="numeroGiorno" class="form-control">
+                <option *ngFor="let num of giorniSearch" [value]="num">
+                  {{ num }}
+                </option>
+              </select>
+            </ion-item>
+
+            <!-- MESE -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm">Mese</ion-label>
+              <select formControlName="mese" class="form-control">
+                <option *ngFor="let mese of mesiSearch" [value]="mese.valore">
+                  {{ mese.nome }}
+                </option>
+              </select>
+            </ion-item>
+
+            <!-- ANNO -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm">Anno</ion-label>
+              <select formControlName="anno" class="form-control">
+                <option *ngFor="let anno of anniSearch" [value]="anno">
+                  {{ anno }}
+                </option>
+              </select>
+            </ion-item>
+
+            <ion-button expand="full" type="submit" class="btnForm my-5">
+              Cerca
+            </ion-button>
+          </form>
+          <br />
+          <div *ngIf="speseSearchResult.length>0" class="searchItems">
+            <div class="d-flex justify-content-between align-items-center me-3">
+              <span class="ms-3"
+                >Trovate
+                <span class="fw-bold">{{speseSearchResult.length}}</span>
+                azioni</span
+              >
+              <button
+                (click)="resetSearch()"
+                class="bg-primary p-1 px-3 d-flex align-items-center justify-content-center btnNuovaRicerca"
+              >
+                Nuova ricerca
+              </button>
+            </div>
+
+            <!-- RISULTATI RICERCA -->
+            <ion-list class="mt-3">
+              <ion-item
+                *ngFor="let spesa of speseSearchResult; let i = index"
+                class="ionItemSpese mb-3 d-flex align-items-center flex-wrap gap-2"
+              >
+                <!-- Chip Categoria -->
+                <ion-chip
+                  class="chipCategory me-2 flex-shrink-0 d-flex align-items-center justify-content-center"
+                  [ngStyle]="{'background-color': getCategoriaInfo(spesa.categoria).colore, 'color': 'white'}"
+                >
+                  <ion-icon
+                    class="me-2"
+                    [name]="getCategoriaInfo(spesa.categoria).icona"
+                  ></ion-icon>
+                </ion-chip>
+
+                <!-- Label con testo a capo -->
+                <ion-label class="flex-grow-1 text-start ms-2">
+                  <span class="fw-bold mb-1">{{ spesa.azione }}</span>
+                  <p class="mb-0">
+                    {{ spesa.nomeGiorno }} {{ spesa.numeroGiorno }} {{
+                    getNomeMese(spesa.mese) }} {{ spesa.anno }}
+                  </p>
+                </ion-label>
+
+                <!-- Entrata/Uscita -->
+                <div class="d-flex flex-column align-items-end ms-auto">
+                  <ion-chip color="success" *ngIf="spesa.entrata"
+                    >+{{ spesa.entrata | currency:'EUR':'symbol':'1.2-2'
+                    }}</ion-chip
+                  >
+                  <ion-chip color="danger" *ngIf="spesa.uscita"
+                    >-{{ spesa.uscita | currency:'EUR':'symbol':'1.2-2'
+                    }}</ion-chip
+                  >
+                </div>
+              </ion-item>
+            </ion-list>
           </div>
-          
-          <!-- RISULTATI RICERCA -->
-          <ion-list class="mt-3">
-            <ion-item *ngFor="let spesa of speseSearchResult; let i = index" class="ionItemSpese mb-3 d-flex align-items-center flex-wrap gap-2">
-              <!-- Chip Categoria -->
-              <ion-chip class="chipCategory me-2 flex-shrink-0 d-flex align-items-center justify-content-center"
-                [ngStyle]="{'background-color': getCategoriaInfo(spesa.categoria).colore, 'color': 'white'}">
-                <ion-icon class="me-2" [name]="getCategoriaInfo(spesa.categoria).icona"></ion-icon>
-              </ion-chip>
-            
-              <!-- Label con testo a capo -->
-              <ion-label class="flex-grow-1 text-start ms-2">
-                <span class="fw-bold mb-1">{{ spesa.azione }}</span>
-                <p class="mb-0">{{ spesa.nomeGiorno }} {{ spesa.numeroGiorno }} {{ getNomeMese(spesa.mese) }} {{ spesa.anno }}</p>
-              </ion-label>
-            
-              <!-- Entrata/Uscita -->
-              <div class="d-flex flex-column align-items-end ms-auto">
-                <ion-chip color="success" *ngIf="spesa.entrata">+{{ spesa.entrata | currency:'EUR':'symbol':'1.2-2' }}</ion-chip>
-                <ion-chip color="danger" *ngIf="spesa.uscita">-{{ spesa.uscita | currency:'EUR':'symbol':'1.2-2' }}</ion-chip>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+    <!-- ######################################################################### -->
+
+    <!-- ###########################  MODALE DELLE IMPOSTAZIONI  ############################################## -->
+    <ion-modal
+      [isOpen]="isModalSettingOpen"
+      (ionModalDidDismiss)="closeSettingsModal()"
+    >
+      <ng-template>
+        <ion-header class="modalHeader">
+          <ion-toolbar>
+            <ion-title>Impostazioni</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeSettingsModal()">Chiudi</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+
+        <div
+          *ngIf="localStorageDataNotFound"
+          class="container text-center mt-5 pt-3"
+        >
+          <h1 class="display-4 fw-bold">Benvenuto!</h1>
+          <p class="lead">Inserisci i seguenti dati prima di continuare.</p>
+        </div>
+
+        <ion-content class="modalContent">
+          <form
+            [formGroup]="formSettings"
+            (ngSubmit)="submitSettings()"
+            class="formAggModAzione formSearchTOP"
+          >
+            <!-- AZIONE -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Come ti chiami?</ion-label
+              >
+              <input
+                type="text"
+                formControlName="nomeUtente"
+                class="form-control"
+                maxlength="22"
+                required
+              />
+            </ion-item>
+
+            <!-- NOME GIORNO -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Tema App</ion-label
+              >
+              <select
+                formControlName="temaUtente"
+                class="form-control"
+                required
+              >
+                <option *ngFor="let tema of temiDisponibili" [value]="tema">
+                  {{ tema | titlecase }}
+                </option>
+              </select>
+            </ion-item>
+
+            <ion-button
+              expand="full"
+              type="submit"
+              class="btnForm my-5"
+              [disabled]="formSettings.invalid"
+            >
+              Salva Impostazioni
+            </ion-button>
+          </form>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+    <!-- ######################################################################### -->
+
+    <div class="container d-flex justify-content-center pt-3 mt-3">
+      <div class="credit-card">
+        <div class="card-saldo text-start">
+          <span class="label">Saldo Totale</span>
+          <span class="value fw-bold" style="font-size: 2rem">
+            {{ totali.saldo | currency:'EUR':'symbol':'1.2-2' }}
+          </span>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center position-relative mt-2">
+          <div class="capsule-card position-relative">
+            <div
+              class="icon-container bg-success text-white icon-absolute left"
+            >
+              <ion-icon name="arrow-up" class="ms-2"></ion-icon>
+            </div>
+            <div
+              class="saldo text-success saldo-absolute guadagni text-start ps-2"
+            >
+              <span class="label fw-bold">Guadagni</span>
+              <span class="valoreSaldo"
+                >+{{ totali.totaleEntrate | currency:'EUR':'symbol':'1.0-0'
+                }}</span
+              >
+            </div>
+          </div>
+
+          <div class="capsule-card position-relative">
+            <div
+              class="icon-container bg-danger text-white icon-absolute right"
+            >
+              <ion-icon name="arrow-down" class="ms-2"></ion-icon>
+            </div>
+            <div class="saldo text-danger saldo-absolute perdite text-end pe-2">
+              <span class="label fw-bold">Perdite</span>
+              <span class="valoreSaldo"
+                >-{{ totali.totaleUscite | currency:'EUR':'symbol':'1.0-0'
+                }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="containerDate">
+      <div id="annoTitle">
+        <div class="frecceMese">
+          <ion-icon
+            name="chevron-back"
+            (click)="changeAnno(-1)"
+            style="
+              width: 1rem !important;
+              height: 1rem !important;
+              background-color: white;
+              color: var(--backgroundDarkColor) black;
+              border-radius: 50%;
+            "
+          ></ion-icon>
+        </div>
+
+        <ion-title size="large" class="fw-bold fs-3"
+          >{{ currentYear }}</ion-title
+        >
+
+        <div class="frecceMese">
+          <ion-icon
+            *ngIf="currentYear < thisYear; else disabledChevron"
+            name="chevron-forward"
+            (click)="changeAnno(+1)"
+            style="
+              width: 1rem !important;
+              height: 1rem !important;
+              background-color: white;
+              color: var(--backgroundDarkColor);
+              border-radius: 50%;
+            "
+          ></ion-icon>
+          <ng-template #disabledChevron class="frecceMese">
+            <ion-icon
+              name="chevron-forward"
+              class="disabled"
+              style="
+                width: 1rem !important;
+                height: 1rem !important;
+                background-color: white;
+                color: var(--backgroundDarkColor);
+                border-radius: 50%;
+              "
+            ></ion-icon>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <ion-segment
+      [value]="meseSelezionato"
+      (ionChange)="selezionaMese($event)"
+      class="scrollable-segment pb-2 pt-4"
+    >
+      <ng-container *ngFor="let mese of meseList">
+        <ion-segment-button
+          *ngIf="mese.spese && mese.spese.length > 0"
+          [value]="mese.numeroMese + '-' + mese.anno"
+        >
+          <ion-label class="nomeMeseSegment"
+            >{{ mese.nomeMese.substring(0,3) }}</ion-label
+          >
+        </ion-segment-button>
+      </ng-container>
+    </ion-segment>
+
+    <div *ngFor="let mese of meseList; let i = index">
+      <div *ngIf="meseSelezionato === (mese.numeroMese + '-' + mese.anno)">
+        <ion-list
+          *ngIf="mese.spese && mese.spese.length > 0; else noSpese"
+          class="mb-5 pb-4"
+          ><!--style="background-color: transparent !important;"-->
+
+          <!-- BANNER RIEPILOGO SPESE MENSILI -->
+          <ion-item class="ionItemRiepilogoSpese text-center mx-2">
+            <ion-label
+              class="d-flex justify-content-between align-items-center w-100"
+            >
+              <span class="p-1 px-2 fw-bold"
+                >Riepilogo di {{mese.nomeMese}}</span
+              >
+              <div
+                class="d-flex justify-content-center align-items-center"
+                style="
+                  background-color: var(--backgroundDarkColor);
+                  border-radius: 3rem;
+                  padding: 0.05rem;
+                "
+              >
+                <ion-chip color="success" *ngIf="mese.speseTotaleMese >= 0">
+                  +{{ mese.speseTotaleMese | currency:'EUR':'symbol':'1.2-2' }}
+                </ion-chip>
+                <ion-chip color="danger" *ngIf="mese.speseTotaleMese < 0">
+                  {{ mese.speseTotaleMese | currency:'EUR':'symbol':'1.2-2' }}
+                </ion-chip>
+              </div>
+            </ion-label>
+          </ion-item>
+
+          <!-- RIEPILOGO SPESE MENSILI -->
+          <ion-item
+            *ngFor="let spesa of mese.spese; let i = index"
+            class="ionItemSpese my-1 d-flex align-items-center flex-wrap gap-2"
+          >
+            <!-- Chip Categoria -->
+            <ion-chip
+              class="chipCategory me-2 flex-shrink-0 d-flex align-items-center justify-content-center"
+              [ngStyle]="{'background-color': getCategoriaInfo(spesa.categoria).colore, 'color': 'white'}"
+            >
+              <ion-icon
+                class="me-2"
+                [name]="getCategoriaInfo(spesa.categoria).icona"
+              ></ion-icon>
+            </ion-chip>
+
+            <!-- Label con testo a capo -->
+            <ion-label class="flex-grow-1 text-start ms-2">
+              <span class="fw-bold d-block">{{ spesa.azione }}</span>
+              <p class="mb-0">
+                {{ spesa.nomeGiorno }} {{ spesa.numeroGiorno }}
+              </p>
+            </ion-label>
+
+            <!-- Entrata/Uscita -->
+            <div class="d-flex flex-column align-items-end ms-auto">
+              <ion-chip color="success" *ngIf="spesa.entrata"
+                >+{{ spesa.entrata | currency:'EUR':'symbol':'1.2-2'
+                }}</ion-chip
+              >
+              <ion-chip color="danger" *ngIf="spesa.uscita"
+                >-{{ spesa.uscita | currency:'EUR':'symbol':'1.2-2' }}</ion-chip
+              >
+            </div>
+
+            <!-- Pulsante per aprire il modale -->
+            <ion-icon
+              name="ellipsis-vertical-sharp"
+              (click)="openModalAzioni(spesa)"
+              class="fs-5 ms-2"
+            ></ion-icon>
+          </ion-item>
+
+          <!-- Modale con i pulsanti "Modifica" ed "Elimina" -->
+          <ion-modal
+            [isOpen]="isModalAzioniOpen"
+            (didDismiss)="closeModalAzioni()"
+            cssClass="bottomSheetModal"
+          >
+            <ng-template>
+              <ion-content class="text-center color-light">
+                <!-- Overlay oscuro che copre il resto della pagina -->
+                <div class="overlay" *ngIf="isModalAzioniOpen"></div>
+
+                <div
+                  class="pt-4 pb-4 px-3 d-flex flex-column justify-content-center align-items-center gap-3"
+                >
+                  <!-- Pulsante Modifica -->
+                  <button
+                    (click)="updateButton()"
+                    class="bg-primary p-2 py-3 d-flex align-items-center justify-content-center"
+                    style="
+                      border-radius: 2rem !important;
+                      color: white !important;
+                      gap: 0.5rem;
+                      border: none;
+                    "
+                  >
+                    <ion-icon name="create-sharp"></ion-icon>
+                    <span>Modifica</span>
+                  </button>
+
+                  <!-- Pulsante Elimina -->
+                  <button
+                    id="elimina-alert"
+                    class="p-2 py-3 d-flex align-items-center justify-content-center"
+                    style="
+                      border-radius: 2rem !important;
+                      color: white !important;
+                      gap: 0.5rem;
+                      background: #dc3545 !important;
+                      border: none;
+                    "
+                  >
+                    <ion-icon name="trash-sharp"></ion-icon>
+                    <span>Elimina</span>
+                  </button>
+
+                  <!-- Alert di conferma eliminazione -->
+                  <ion-alert
+                    trigger="elimina-alert"
+                    class="custom-alert"
+                    header="Sei sicuro di voler eliminare questa azione?"
+                    [buttons]="deleteButton"
+                  ></ion-alert>
+                </div>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+        </ion-list>
+        <ng-template #noSpese>
+          <!--<p class="text-muted">Nessuna spesa registrata</p>-->
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
+    <ion-fab
+      horizontal="end"
+      vertical="bottom"
+      slot="fixed"
+      class="me-2 mb-1"
+      (click)="isUpdateForm=false; setOpen(true)"
+    >
+      <ion-fab-button class="fabAggiungiAzione text-center">
+        <ion-icon name="add" class="ms-2 fs-1"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
+    <ion-modal [isOpen]="isModalOpen">
+      <ng-template>
+        <ion-header class="modalHeader">
+          <ion-toolbar>
+            <ion-title
+              >{{ isUpdateForm ? 'Modifica' : 'Nuova' }} Spesa</ion-title
+            >
+            <ion-buttons slot="end">
+              <ion-button (click)="setOpen(false)">Chiudi</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+
+        <ion-content class="modalContent">
+          <form
+            [formGroup]="formAggModAzione"
+            (ngSubmit)="submitForm()"
+            class="formAggModAzione formAggModAzioneTOP"
+          >
+            <!-- NOME AZIONE -->
+            <ion-item class="mb-4">
+              <ion-label position="floating" class="labelForm"
+                >Nome Azione</ion-label
+              >
+              <input
+                type="text"
+                formControlName="azione"
+                class="form-control"
+                [maxlength]="42"
+                [formControl]="azioneControl"
+              />
+            </ion-item>
+
+            <!-- ENTRATA / USCITA -->
+            <ion-item class="radio-group">
+              <label class="radio-button entrataBtn">
+                <input
+                  type="radio"
+                  formControlName="tipo"
+                  value="entrata"
+                  [formControl]="tipoControl"
+                />
+                <span>Entrata</span>
+              </label>
+
+              <label class="radio-button uscitaBtn">
+                <input
+                  type="radio"
+                  formControlName="tipo"
+                  value="uscita"
+                  [formControl]="tipoControl"
+                />
+                <span>Uscita</span>
+              </label>
+            </ion-item>
+
+            <!-- IMPORTO AZIONE -->
+            <ion-item>
+              <ion-label position="floating" class="labelForm"
+                >Importo</ion-label
+              >
+              <input
+                type="number"
+                formControlName="importo"
+                step="0.01"
+                class="form-control"
+                [formControl]="importoControl"
+              />
+            </ion-item>
+
+            <!-- CATEGORIA AZIONE -->
+            <ion-item class="radio-group radio-groupCategorie">
+              <ion-label position="floating" class="labelFormCategoria"
+                >Categoria</ion-label
+              >
+              <div class="radio-buttons-container">
+                <label
+                  *ngFor="let categoria of categorie"
+                  class="radio-buttonCategorie"
+                  [ngStyle]="{'border-color': categoria.colore, 'background-color': selectedCategory === categoria.nome ? categoria.colore : ''}"
+                >
+                  <input
+                    type="radio"
+                    formControlName="categoria"
+                    [value]="categoria.nome"
+                    (change)="onCategoryChange(categoria)"
+                    [formControl]="categoriaControl"
+                  />
+                  <span>
+                    <ion-icon class="ms-2" [name]="categoria.icona"></ion-icon>
+                  </span>
+                </label>
               </div>
             </ion-item>
-                    
-          </ion-list>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>  
-  <!-- ######################################################################### -->
 
-  <!-- ###########################  MODALE DELLE IMPOSTAZIONI  ############################################## -->
-  <ion-modal [isOpen]="isModalSettingOpen" (ionModalDidDismiss)="closeSettingsModal()">
-    <ng-template>
-      <ion-header class="modalHeader">
-        <ion-toolbar>
-          <ion-title>Impostazioni</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeSettingsModal()">Chiudi</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-
-      <div *ngIf="localStorageDataNotFound" class="container text-center mt-5 pt-3">
-        <h1 class="display-4 fw-bold">Benvenuto!</h1>
-        <p class="lead">Inserisci i seguenti dati prima di continuare.</p>
-      </div>      
-  
-      <ion-content class="modalContent">
-        <form [formGroup]="formSettings" (ngSubmit)="submitSettings()" class="formAggModAzione formSearchTOP">
-    
-          <!-- AZIONE -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Come ti chiami?</ion-label>
-            <input type="text" formControlName="nomeUtente" class="form-control" maxlength="22" required>
-          </ion-item>
-    
-          <!-- NOME GIORNO -->
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Tema App</ion-label>
-            <select formControlName="temaUtente" class="form-control" required>
-              <option *ngFor="let tema of temiDisponibili" [value]="tema">{{ tema | titlecase }}</option>
-            </select>            
-          </ion-item>
-
-          <ion-button expand="full" type="submit" class="btnForm my-5" [disabled]="formSettings.invalid">
-            Salva Impostazioni
-          </ion-button>          
-
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>  
-  <!-- ######################################################################### -->  
-
-  <div class="container d-flex justify-content-center pt-3 mt-3">
-    <div class="credit-card">
-      <div class="card-saldo text-start">
-        <span class="label">Saldo Totale</span>
-        <span class="value fw-bold" style="font-size: 2rem;">
-          {{ totali.saldo | currency:'EUR':'symbol':'1.2-2' }}
-        </span>
-      </div>
-
-      <div class="d-flex gap-3 justify-content-center position-relative mt-2">
-        <div class="capsule-card position-relative">
-          <div class="icon-container bg-success text-white icon-absolute left">
-            <ion-icon name="arrow-up" class="ms-2"></ion-icon>
-          </div>
-          <div class="saldo text-success saldo-absolute guadagni text-start ps-2">
-            <span class="label fw-bold">Guadagni</span>
-            <span class="valoreSaldo">+{{ totali.totaleEntrate | currency:'EUR':'symbol':'1.0-0' }}</span>
-          </div>
-        </div>
-
-        <div class="capsule-card position-relative">
-          <div class="icon-container bg-danger text-white icon-absolute right">
-            <ion-icon name="arrow-down" class="ms-2"></ion-icon>
-          </div>
-          <div class="saldo text-danger saldo-absolute perdite text-end pe-2">
-            <span class="label fw-bold">Perdite</span>
-            <span class="valoreSaldo">-{{ totali.totaleUscite | currency:'EUR':'symbol':'1.0-0' }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="containerDate">
-    <div id="annoTitle">
-      <div  class="frecceMese">
-        <ion-icon name="chevron-back" (click)="changeAnno(-1)" style="width: 1rem !important; height: 1rem !important; background-color: white; color: var(--backgroundDarkColor)black; border-radius: 50%;"></ion-icon>
-      </div>
-
-      <ion-title size="large" class="fw-bold fs-3">{{ currentYear }}</ion-title>
-
-      <div class="frecceMese">
-        <ion-icon *ngIf="currentYear < thisYear; else disabledChevron" name="chevron-forward" (click)="changeAnno(+1)" style="width: 1rem !important; height: 1rem !important; background-color: white; color: var(--backgroundDarkColor); border-radius: 50%;"></ion-icon>
-        <ng-template #disabledChevron class="frecceMese">
-          <ion-icon name="chevron-forward" class="disabled" style="width: 1rem !important; height: 1rem !important; background-color: white; color: var(--backgroundDarkColor); border-radius: 50%;"></ion-icon>
-        </ng-template>        
-      </div>
-    </div>
-  </div>
-
-  <ion-segment [value]="meseSelezionato" (ionChange)="selezionaMese($event)" class="scrollable-segment pb-2 pt-4">
-    <ng-container *ngFor="let mese of meseList">
-      <ion-segment-button *ngIf="mese.spese && mese.spese.length > 0" [value]="mese.numeroMese + '-' + mese.anno">
-        <ion-label class="nomeMeseSegment">{{ mese.nomeMese.substring(0,3) }}</ion-label>
-      </ion-segment-button>
-    </ng-container>
-  </ion-segment>
-
-  <div *ngFor="let mese of meseList; let i = index">
-    <div *ngIf="meseSelezionato === (mese.numeroMese + '-' + mese.anno)">
-      <ion-list *ngIf="mese.spese && mese.spese.length > 0; else noSpese" class="mb-5 pb-4"><!--style="background-color: transparent !important;"-->
-
-        <!-- BANNER RIEPILOGO SPESE MENSILI -->
-        <ion-item class="ionItemRiepilogoSpese text-center mx-2">
-          <ion-label class="d-flex justify-content-between align-items-center w-100">
-            <span class="p-1 px-2 fw-bold">Riepilogo di {{mese.nomeMese}}</span>
-            <div class="d-flex justify-content-center align-items-center" style="background-color: var(--backgroundDarkColor); border-radius: 3rem; padding: 0.05rem">
-              <ion-chip color="success" *ngIf="mese.speseTotaleMese >= 0">
-                +{{ mese.speseTotaleMese | currency:'EUR':'symbol':'1.2-2' }}
-              </ion-chip>
-              <ion-chip color="danger" *ngIf="mese.speseTotaleMese < 0">
-                {{ mese.speseTotaleMese | currency:'EUR':'symbol':'1.2-2' }}
-              </ion-chip>
-            </div>            
-          </ion-label>
-        </ion-item>
-        
-
-        <!-- RIEPILOGO SPESE MENSILI -->
-        <ion-item *ngFor="let spesa of mese.spese; let i = index" class="ionItemSpese my-1 d-flex align-items-center flex-wrap gap-2">
-          <!-- Chip Categoria -->
-          <ion-chip class="chipCategory me-2 flex-shrink-0 d-flex align-items-center justify-content-center"
-            [ngStyle]="{'background-color': getCategoriaInfo(spesa.categoria).colore, 'color': 'white'}">
-            <ion-icon class="me-2" [name]="getCategoriaInfo(spesa.categoria).icona"></ion-icon>
-          </ion-chip>
-        
-          <!-- Label con testo a capo -->
-          <ion-label class="flex-grow-1 text-start ms-2">
-            <span class="fw-bold d-block">{{ spesa.azione }}</span>
-            <p class="mb-0">{{ spesa.nomeGiorno }} {{ spesa.numeroGiorno }}</p>
-          </ion-label>
-        
-          <!-- Entrata/Uscita -->
-          <div class="d-flex flex-column align-items-end ms-auto">
-            <ion-chip color="success" *ngIf="spesa.entrata">+{{ spesa.entrata | currency:'EUR':'symbol':'1.2-2' }}</ion-chip>
-            <ion-chip color="danger" *ngIf="spesa.uscita">-{{ spesa.uscita | currency:'EUR':'symbol':'1.2-2' }}</ion-chip>
-          </div>
-        
-          <!-- Pulsante Popover -->
-          <ion-icon name="ellipsis-vertical-sharp" (click)="openPopover($event, spesa)" class="fs-5 ms-2"></ion-icon>
-        </ion-item>        
-        
-      </ion-list>
-      <ng-template #noSpese>
-        <!--<p class="text-muted">Nessuna spesa registrata</p>-->
+            <ion-button
+              expand="full"
+              type="submit"
+              [disabled]="formAggModAzione.invalid"
+              class="btnForm mt-5"
+            >
+              {{ isUpdateForm ? 'Modifica' : 'Aggiungi' }}
+            </ion-button>
+          </form>
+        </ion-content>
       </ng-template>
-    </div>
-  </div>
-  
-  <!-- PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
-  <ion-fab horizontal="end" vertical="bottom" slot="fixed" class="me-2 mb-1" (click)="isUpdateForm=false; setOpen(true)">
-    <ion-fab-button class="fabAggiungiAzione text-center">
-      <ion-icon name="add" class="ms-2 fs-1"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+    </ion-modal>
 
-  <ion-modal [isOpen]="isModalOpen">
-    <ng-template>
-      <ion-header class="modalHeader">
-        <ion-toolbar>
-          <ion-title>{{ isUpdateForm ? 'Modifica' : 'Nuova' }} Spesa</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="setOpen(false)">Chiudi</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-  
-      <ion-content class="modalContent">
-        <form [formGroup]="formAggModAzione" (ngSubmit)="submitForm()" class="formAggModAzione formAggModAzioneTOP">
-          
-          <!-- NOME AZIONE --> 
-          <ion-item class="mb-4">
-            <ion-label position="floating" class="labelForm">Nome Azione</ion-label>
-            <input type="text" formControlName="azione" class="form-control" [maxlength]="42" [formControl]="azioneControl">
-          </ion-item>
-
-          <!-- ENTRATA / USCITA --> 
-          <ion-item class="radio-group">
-            <label class="radio-button entrataBtn">
-              <input type="radio" formControlName="tipo" value="entrata" [formControl]="tipoControl">
-              <span>Entrata</span>
-            </label>
-          
-            <label class="radio-button uscitaBtn">
-              <input type="radio" formControlName="tipo" value="uscita" [formControl]="tipoControl">
-              <span>Uscita</span>
-            </label>
-          </ion-item>        
-          
-          <!-- IMPORTO AZIONE --> 
-          <ion-item>
-            <ion-label position="floating" class="labelForm">Importo</ion-label>
-            <input type="number" formControlName="importo" step="0.01" class="form-control" [formControl]="importoControl">
-          </ion-item>
-
-          <!-- CATEGORIA AZIONE --> 
-          <ion-item class="radio-group radio-groupCategorie">
-            <ion-label position="floating" class="labelFormCategoria">Categoria</ion-label>
-            <div class="radio-buttons-container">
-              <label *ngFor="let categoria of categorie" class="radio-buttonCategorie" 
-                [ngStyle]="{'border-color': categoria.colore, 'background-color': selectedCategory === categoria.nome ? categoria.colore : ''}">
-                <input type="radio" formControlName="categoria" [value]="categoria.nome" (change)="onCategoryChange(categoria)" [formControl]="categoriaControl">
-                <span>
-                  <ion-icon class="ms-2" [name]="categoria.icona"></ion-icon>
-                </span>
-              </label>
-            </div>
-          </ion-item>
-          
-          <ion-button expand="full" type="submit" [disabled]="formAggModAzione.invalid" class="btnForm mt-5">
-            {{ isUpdateForm ? 'Modifica' : 'Aggiungi' }}
-          </ion-button>        
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-  
-  <!-- FINE PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
-
+    <!-- FINE PANNELLO CON BOTTONE AGGIUNTA AZIONE -->
+  </ion-content>
 </ion-content>

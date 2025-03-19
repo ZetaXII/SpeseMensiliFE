@@ -1,3 +1,10 @@
+/* Aggiungi se non c'è già */
+html,
+body {
+  height: 100%;
+  overflow-y: auto;
+}
+
 #containerDate {
   margin-top: 2.7rem;
   padding: 0 1rem 1.25rem;
@@ -98,7 +105,8 @@ ion-content {
   width: 2rem !important;
 }
 
-.frecceMese ion-icon, .frecceMese ng-template ion-icon {
+.frecceMese ion-icon,
+.frecceMese ng-template ion-icon {
   background-color: white !important;
   color: black !important;
   width: 0.1rem !important;
@@ -114,7 +122,11 @@ ion-content {
 .meseTitle {
   border-radius: 0.8rem;
   margin: 0.6rem 0;
-  --ion-item-background: linear-gradient(135deg,var(--customColor1),var(--customColor2)) !important;
+  --ion-item-background: linear-gradient(
+    135deg,
+    var(--customColor1),
+    var(--customColor2)
+  ) !important;
 }
 
 .riepilogo-container {
@@ -255,7 +267,6 @@ ion-item.ionItemSpese {
   }
 }
 
-
 /*.segment-button-checked ::ng-deep {
   color: var(--backgroundDarkColor) !important;
 }*/
@@ -308,7 +319,7 @@ ion-icon {
   width: 3.5rem;
   height: 3.5rem;
   text-align: center;
-  color: var(--bs-danger);;
+  color: var(--bs-danger);
   display: flex; /* Usa flexbox */
   justify-content: center; /* Allinea orizzontalmente */
   align-items: center; /* Allinea verticalmente */
@@ -375,7 +386,11 @@ ion-icon {
 }
 
 .fabAggiungiAzione {
-  --background: linear-gradient(135deg, var(--customColor1), var(--customColor2));
+  --background: linear-gradient(
+    135deg,
+    var(--customColor1),
+    var(--customColor2)
+  );
   --color: white;
 }
 
@@ -420,7 +435,8 @@ ion-modal {
   --inner-border-width: 0px;
 }
 
-.formAggModAzione ion-item input, .formAggModAzione ion-item select {
+.formAggModAzione ion-item input,
+.formAggModAzione ion-item select {
   background: var(--backgroundDarkColor2) !important;
   border-radius: 50rem !important;
   padding: 1.3rem 2rem;
@@ -435,7 +451,11 @@ ion-modal {
 
 /* Stile per il bottone */
 .btnForm {
-  background: linear-gradient(135deg, var(--customColor1), var(--customColor2)) !important;
+  background: linear-gradient(
+    135deg,
+    var(--customColor1),
+    var(--customColor2)
+  ) !important;
   --background: none;
   --box-shadow: none;
   border-radius: 50rem !important;
@@ -480,14 +500,14 @@ ion-modal {
 }
 
 .entrataBtn {
-  border-color:  var(--bs-success);
-  color:  var(--bs-success);
+  border-color: var(--bs-success);
+  color: var(--bs-success);
   margin-right: 1.3rem;
 }
 
 .uscitaBtn {
-  border-color:  var(--bs-danger);
-  color:  var(--bs-danger);
+  border-color: var(--bs-danger);
+  color: var(--bs-danger);
 }
 
 /* Quando il radio è selezionato, cambia solo lo stile di uscitaBtn */
@@ -548,7 +568,7 @@ ion-modal {
   flex-wrap: wrap; /* Consente ai bottoni di andare a capo se necessario */
   align-items: center;
   justify-content: center;
-  flex: 1;  
+  flex: 1;
   width: 100%;
   margin-top: 0.5rem;
 }
@@ -560,14 +580,14 @@ ion-modal {
 }
 
 .modalContent {
-  overflow-y: auto;  // Abilita lo scroll verticale
+  overflow-y: auto; // Abilita lo scroll verticale
   padding-bottom: 5rem !important;
 }
 
 .btnNuovaRicerca {
-  border-radius: 2rem !important; 
-  color: white !important; 
-  gap: 0.5rem; 
+  border-radius: 2rem !important;
+  color: white !important;
+  gap: 0.5rem;
   border: none;
 }
 
@@ -575,8 +595,47 @@ ion-loading {
   border-radius: 3rem;
   --spinner-color: var(--customColor1);
   --background: var(--backgroundDarkColor2);
-  border-radius: 1rem !important; 
-  overflow: hidden !important; 
-  background-color: var(--backgroundDarkColor3); 
-  padding: 10px;  
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  background-color: var(--backgroundDarkColor3);
+  padding: 10px;
+}
+
+// ##### MODALE DELLE AZIONI #####
+.bottomSheetModal {
+  --height: 13rem; /* Altezza del modale */
+  --width: 100%; /* Larghezza 100% */
+  --border-radius: 1rem;
+  --z-index: 1000; /* Modale sopra gli altri contenuti */
+
+  /* Posizione centrata */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  justify-content: center;
+}
+
+.bottomSheetModal .ion-content {
+  margin-top: 10rem !important;
+}
+
+.bottomSheetModal .popoverButtons {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bottomSheetModal button {
+  margin-top: 10px;
+  width: 100%;
+  border-radius: 2rem;
+  color: white;
+  gap: 0.5rem;
+  border: none;
+}
+
+.bottomSheetModal ion-icon {
+  font-size: 1.2rem;
 }

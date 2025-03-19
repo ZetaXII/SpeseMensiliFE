@@ -1,5 +1,10 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, Renderer2 } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  Inject,
+  Renderer2,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -8,7 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import {
   IonButton,
   IonButtons,
@@ -27,12 +32,16 @@ import {
   IonSegmentButton,
   IonTitle,
   IonToolbar,
-  ToastController
+  ToastController,
+  IonRefresher,  
+  RefresherEventDetail,
+  IonRefresherContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   add,
   arrowDown,
+  arrowDownOutline,
   arrowUp,
   barChart,
   car,
@@ -56,7 +65,6 @@ import {
   trashSharp,
 } from 'ionicons/icons';
 import { Spesa, SpeseService, Totali } from '../services/spese.service';
-import { PopoverContentComponent } from './popover-content.component';
 
 export interface Mese {
   nomeMese: string;
@@ -92,15 +100,17 @@ export interface Mese {
     IonFab,
     IonFabButton,
     ReactiveFormsModule,
-    IonLoading
+    IonLoading,
+    IonRefresher,
+    IonRefresherContent
   ],
-  providers: [PopoverController, ModalController],
+  providers: [ModalController],
 })
 export class HomePage {
   // PER I DATI IN LOCAL STORAGE
   nomeUtente: string | null = localStorage.getItem('nomeUtente');
   temaUtente: string | null = localStorage.getItem('temaUtente');
-  localStorageDataNotFound : boolean = false;
+  localStorageDataNotFound: boolean = false;
   // PER LE AZIONI
   meseList: Mese[] = [];
   totali: Totali = { totaleEntrate: 0, totaleUscite: 0, saldo: 0 };
@@ -119,7 +129,7 @@ export class HomePage {
   importoControl = new FormControl('', Validators.required);
   categoriaControl = new FormControl('', Validators.required);
   // PER LO SPINNER DEL CARICAMENTO
-  isLoading : boolean = false;
+  isLoading: boolean = false;
 
   categorie = [
     { nome: 'Auto', colore: '#1F77B4', icona: 'car' }, // Blu brillante
@@ -131,11 +141,10 @@ export class HomePage {
 
   constructor(
     private speseService: SpeseService,
-    private popoverController: PopoverController,
     private fb: FormBuilder,
     private toastController: ToastController,
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document    
+    @Inject(DOCUMENT) private document: Document
   ) {
     addIcons({
       card,
@@ -160,7 +169,8 @@ export class HomePage {
       search,
       settingsSharp,
       closeCircle,
-      checkmarkCircle
+      checkmarkCircle,
+      arrowDownOutline
     });
 
     /* FORM AGGIUNTA/MODIFICA SPESA */
@@ -168,7 +178,7 @@ export class HomePage {
       azione: this.azioneControl,
       tipo: this.tipoControl,
       importo: this.importoControl,
-      categoria: this.categoriaControl
+      categoria: this.categoriaControl,
     });
 
     /* FORM RICERCA SPESE */
@@ -179,7 +189,7 @@ export class HomePage {
       numeroGiorno: this.numeroGiornoSearchControl,
       importo: this.importoSearchControl,
       mese: this.meseSearchControl,
-      anno: this.annoSearchControl
+      anno: this.annoSearchControl,
     });
 
     /* FORM IMPOSTAZIONI */
@@ -197,22 +207,26 @@ export class HomePage {
       this.loadTotali();
       this.initializeMesi(this.currentYear);
       this.setMeseCorrente();
-      this.anniSearch = Array.from({ length: this.currentYear - 2023 }, (_, i) => 2024 + i);      
+      this.anniSearch = Array.from(
+        { length: this.currentYear - 2023 },
+        (_, i) => 2024 + i
+      );
       this.isLoading = false; // Nasconde il loader dopo 3 secondi
     }, 500);
   }
 
   /* PER CARICARE I DATI DELLA CACHE */
   loadLocalStorageData() {
-    this.nomeUtente = localStorage.getItem('nomeUtente') || "Utente";
-    this.temaUtente = localStorage.getItem('temaUtente') || "";
-    if(!this.nomeUtente || this.nomeUtente==="" && !this.temaUtente || this.temaUtente==="")
-    {
+    this.nomeUtente = localStorage.getItem('nomeUtente') || 'Utente';
+    this.temaUtente = localStorage.getItem('temaUtente') || '';
+    if (
+      !this.nomeUtente ||
+      (this.nomeUtente === '' && !this.temaUtente) ||
+      this.temaUtente === ''
+    ) {
       this.localStorageDataNotFound = true;
       this.openSettingsModal();
-    }
-    else
-    {
+    } else {
       this.localStorageDataNotFound = false;
       this.cambiaTema(this.temaUtente);
     }
@@ -221,12 +235,11 @@ export class HomePage {
   /* PER APRIRE IL PANNELLO DEL FORM DI AGGIUNTA o MODIFICA */
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;
-    if(isOpen==false)
-    {
-      this.azioneControl.setValue("");
-      this.tipoControl.setValue("");
+    if (isOpen == false) {
+      this.azioneControl.setValue('');
+      this.tipoControl.setValue('');
       this.importoControl.setValue(null);
-      this.categoriaControl.setValue("");
+      this.categoriaControl.setValue('');
       this.selectedCategory = null;
       this.formAggModAzione.reset();
     }
@@ -247,14 +260,20 @@ export class HomePage {
       const spesa: any = {
         azione: this.azioneControl.value,
         categoria: this.categoriaControl.value, // Impostato ad "Altro"
-        entrata: this.tipoControl.value === 'entrata' ? this.importoControl.value : null,
-        uscita: this.tipoControl.value === 'uscita' ? this.importoControl.value : null,
+        entrata:
+          this.tipoControl.value === 'entrata'
+            ? this.importoControl.value
+            : null,
+        uscita:
+          this.tipoControl.value === 'uscita'
+            ? this.importoControl.value
+            : null,
       };
       // Se isUpdateForm è false => esegue l'aggiunta
-      if(this.isUpdateForm==false){       
+      if (this.isUpdateForm == false) {
         this.speseService.createAzione(spesa).subscribe(
           (response: any) => {
-            this.presentToast("Spesa aggiunta con successo!");
+            this.presentToast('Spesa aggiunta con successo!');
             console.log('Spesa aggiunta con successo:', response);
             this.ngOnInit();
           },
@@ -265,16 +284,22 @@ export class HomePage {
         );
       }
       // Se isUpdateForm è true => esegue la modifica
-      else if(this.isUpdateForm==true){
+      else if (this.isUpdateForm == true) {
         this.speseService.updateAzione(this.spesaUpdateid, spesa).subscribe(
           (response: any) => {
-            this.presentToast("Spesa modificata con successo!");
-            console.log('Spesa con id ${spesa.id} modificata con successo:', response);
-            this.ngOnInit();            
+            this.presentToast('Spesa modificata con successo!');
+            console.log(
+              'Spesa con id ${spesa.id} modificata con successo:',
+              response
+            );
+            this.ngOnInit();
           },
           (error: any) => {
-            this.presentToast("Errore durante la modifica della spesa!");
-            console.error("Errore durante la modifica della spesa con id ${spesa.id}:", error);
+            this.presentToast('Errore durante la modifica della spesa!');
+            console.error(
+              'Errore durante la modifica della spesa con id ${spesa.id}:',
+              error
+            );
           }
         );
       }
@@ -347,7 +372,7 @@ export class HomePage {
       this.currentYear += nextPrev;
       this.initializeMesi(this.currentYear);
       this.setMeseCorrente();
-            
+
       this.isLoading = false; // Nasconde il loader dopo 3 secondi
     }, 180);
   }
@@ -374,7 +399,7 @@ export class HomePage {
       anno,
       isOpen: false,
       spese: null,
-      speseTotaleMese: 0
+      speseTotaleMese: 0,
     }));
 
     // Carica le spese per ogni mese in modo asincrono
@@ -395,10 +420,12 @@ export class HomePage {
       (spese) => {
         if (spese.length) {
           mese.spese = spese.sort((a, b) => b.numeroGiorno - a.numeroGiorno);
-          
+
           // Calcolo del totale mese
-          mese.speseTotaleMese = spese.reduce((totale, spesa) => 
-            totale + (spesa.entrata || 0) - (spesa.uscita || 0), 0
+          mese.speseTotaleMese = spese.reduce(
+            (totale, spesa) =>
+              totale + (spesa.entrata || 0) - (spesa.uscita || 0),
+            0
           );
           //console.log(mese.speseTotaleMese);
         } else {
@@ -410,30 +437,13 @@ export class HomePage {
         console.error('Errore nel recupero delle spese:', error);
         mese.spese = null;
         mese.speseTotaleMese = 0;
-      }      
+      }
     );
   }
 
   toggleMese(mese: Mese) {
     mese.isOpen = !mese.isOpen;
   }
-
-  /* PER I POPOVER */
-  async openPopover(ev: Event, spesa: any) {
-    const mese = this.meseList.find(
-      (m) => m.numeroMese === Number(spesa.mese) && m.anno === spesa.anno
-    );
-    if (!mese) return; // Non aprire il popover se il mese non esiste
-    const popover = await this.popoverController.create({
-      component: PopoverContentComponent,
-      event: ev,
-      translucent: true,
-      componentProps: { spesa, mese, homePage: this },
-    });
-
-    await popover.present();
-  }
-  /******************************** */
 
   // ########### FORM SEARCH SPESA ####################
   isModalSearchOpen: boolean = false;
@@ -454,7 +464,7 @@ export class HomePage {
     { valore: 9, nome: 'Settembre' },
     { valore: 10, nome: 'Ottobre' },
     { valore: 11, nome: 'Novembre' },
-    { valore: 12, nome: 'Dicembre' }
+    { valore: 12, nome: 'Dicembre' },
   ];
   // PER RIEMPIRE IL SELECT DELL'ANNO
   anniSearch: number[] = [];
@@ -469,12 +479,11 @@ export class HomePage {
 
   getNomeMese(mese: string): string {
     const meseNumero = parseInt(mese, 10); // Converte la stringa in numero
-    const meseObj = this.mesiSearch.find(m => m.valore === meseNumero);
+    const meseObj = this.mesiSearch.find((m) => m.valore === meseNumero);
     const nomeMese = meseObj ? meseObj.nome : '';
     return nomeMese ? nomeMese.substring(0, 3).toUpperCase() : ''; // Restituisce i primi 3 caratteri in maiuscolo
   }
-  
-  
+
   openSearchModal() {
     this.isModalSearchOpen = true;
   }
@@ -492,10 +501,10 @@ export class HomePage {
   submitSearch() {
     if (this.formRicercaSpese.valid) {
       this.isLoading = true; // Mostra il loader
-  
+
       const searchData = this.formRicercaSpese.value;
       console.log('Dati ricerca:', searchData);
-  
+
       const spesa: any = {
         azione: this.azioneSearchControl.value || null,
         categoria: this.categoriaSearchControl.value || null,
@@ -503,16 +512,22 @@ export class HomePage {
         numeroGiorno: this.numeroGiornoSearchControl.value || null,
         mese: this.meseSearchControl.value || null,
         anno: this.annoSearchControl.value || null,
-        entrata: (this.importoSearchControl.value && !isNaN(+this.importoSearchControl.value) && +this.importoSearchControl.value >= 0)
-          ? +this.importoSearchControl.value
-          : null,
-        uscita: (this.importoSearchControl.value && !isNaN(+this.importoSearchControl.value) && +this.importoSearchControl.value < 0)
-          ? Math.abs(+this.importoSearchControl.value)
-          : null,
+        entrata:
+          this.importoSearchControl.value &&
+          !isNaN(+this.importoSearchControl.value) &&
+          +this.importoSearchControl.value >= 0
+            ? +this.importoSearchControl.value
+            : null,
+        uscita:
+          this.importoSearchControl.value &&
+          !isNaN(+this.importoSearchControl.value) &&
+          +this.importoSearchControl.value < 0
+            ? Math.abs(+this.importoSearchControl.value)
+            : null,
       };
-  
+
       console.log(JSON.stringify(spesa, null, 2));
-  
+
       this.speseService.searchByFilter(spesa).subscribe(
         (spese) => {
           this.speseSearchResult = spese.reverse();
@@ -533,7 +548,7 @@ export class HomePage {
   formSettings: FormGroup;
   nomeUtenteControl = new FormControl(this.nomeUtente || '');
   temaUtenteControl = new FormControl(this.temaUtente || '');
-  
+
   openSettingsModal() {
     this.isModalSettingOpen = true;
   }
@@ -545,7 +560,7 @@ export class HomePage {
   submitSettings() {
     if (this.formSettings.valid) {
       const impostazioniData = this.formSettings.value;
-  
+
       const impostazioniUtente: any = {
         nomeUtente: impostazioniData.nomeUtente || null,
         temaUtente: impostazioniData.temaUtente || null,
@@ -553,29 +568,28 @@ export class HomePage {
       // Salva i dati nel localStorage
       localStorage.setItem('nomeUtente', impostazioniUtente.nomeUtente);
       localStorage.setItem('temaUtente', impostazioniUtente.temaUtente);
-      
+
       // Cambia il tema dell'app
       this.cambiaTema(impostazioniUtente.temaUtente);
 
-      this.presentToast("Dati salvati correttamente!");
+      this.presentToast('Dati salvati correttamente!');
       console.log('Dati salvati:', JSON.stringify(impostazioniUtente, null, 2));
       this.closeSettingsModal();
       this.ngOnInit();
-    }
-    else {
-      this.presentToast("Si è verificato un errore, inserisci tutti i dati!");
+    } else {
+      this.presentToast('Si è verificato un errore, inserisci tutti i dati!');
     }
   }
-  
+
   // ##########################################################################
 
   // ########### NOTIFICA TOAST ####################
   // Funzione per creare il toast dinamicamente con messaggio
   async presentToast(message: string) {
     const toast = await this.toastController.create({
-      message: message,  // Messaggio dinamico
-      position: 'top',  // Posizione in cima alla pagina
-      duration: 3000,   // Durata del toast
+      message: message, // Messaggio dinamico
+      position: 'top', // Posizione in cima alla pagina
+      duration: 3000, // Durata del toast
       // Determina l'icona e il colore in base al messaggio
       icon: message.includes('errore') ? 'close-circle' : 'checkmark-circle',
       color: message.includes('errore') ? 'danger' : 'success',
@@ -583,11 +597,11 @@ export class HomePage {
       buttons: [
         {
           side: 'start',
-          icon: 'close',  // Icona per chiudere il toast
+          icon: 'close', // Icona per chiudere il toast
           handler: () => {
             toast.dismiss();
-          }
-        }
+          },
+        },
       ],
       swipeGesture: 'vertical', // Chiude il Toast con uno swipe a su o giù
     });
@@ -600,12 +614,137 @@ export class HomePage {
 
   cambiaTema(tema: string) {
     // Rimuove tutti i temi prima di applicare il nuovo
-    this.temiDisponibili.forEach(t => this.renderer.removeClass(this.document.body, `${t}-theme`));
+    this.temiDisponibili.forEach((t) =>
+      this.renderer.removeClass(this.document.body, `${t}-theme`)
+    );
 
     // Aggiunge il nuovo tema selezionato
     if (this.temiDisponibili.includes(tema.toLowerCase())) {
       this.renderer.addClass(this.document.body, `${tema.toLowerCase()}-theme`);
     }
   }
-  // ##########################################################################
+
+  // ###################### PER IL MODAL DELLE AZIONI (MODIFICA ed ELIMINA) ####################################################
+  isModalAzioniOpen: boolean = false;
+  selectedSpesa: any;
+
+  // Funzione per aprire il modale e passarci la spesa selezionata
+  openModalAzioni(spesa: any) {
+    this.selectedSpesa = spesa;
+    this.isModalAzioniOpen = true;
+  }
+
+  // Funzione per chiudere il modale
+  closeModalAzioni() {
+    this.isModalAzioniOpen = false;
+  }
+
+  // Funzione per gestire l'azione di modifica
+  public async updateButton() {
+    // IMPOSTO L'ID DELLA SPESA DA MODIFICARE
+    this.spesaUpdateid = this.selectedSpesa.id;
+    // POPOLO IL FORM COI DATI DELLA SPESA DA MODIFICARE
+    await this.popolaForm();
+    this.isUpdateForm = true;
+    this.setOpen(true);
+    this.closeModalAzioni();
+  }
+
+  // Funzione per popolare il form con i dati della spesa da modificare
+  async popolaForm() {
+    this.closeModalAzioni();
+    if (!this.selectedSpesa) {
+      console.error('Errore: selectedSpesa è undefined o null!');
+      return;
+    }
+
+    let tipo = null;
+    let importo = 0;
+
+    if (
+      this.selectedSpesa.entrata != null &&
+      (this.selectedSpesa.uscita == null || this.selectedSpesa.uscita == 0)
+    ) {
+      tipo = 'entrata';
+      importo = this.selectedSpesa.entrata;
+    } else if (
+      this.selectedSpesa.uscita != null &&
+      (this.selectedSpesa.entrata == null || this.selectedSpesa.entrata == 0)
+    ) {
+      tipo = 'uscita';
+      importo = this.selectedSpesa.uscita;
+    }
+
+    console.log('Popolamento form con:', {
+      azione: this.selectedSpesa.azione,
+      tipo: tipo,
+      importo: importo,
+      categoria: this.selectedSpesa.categoria || '',
+    });
+
+    if (!this.formAggModAzione) {
+      console.error('Errore: formAggModAzione non è inizializzato!');
+      return;
+    }
+
+    // SETTA LA VISIBILITA' DELLA CATEGORIA SELEZIONATA
+    this.onCategoryChange({ nome: this.selectedSpesa.categoria });
+
+    this.formAggModAzione.patchValue({
+      azione: this.selectedSpesa.azione || '',
+      tipo: tipo,
+      importo: importo,
+      categoria: this.selectedSpesa.categoria || '',
+    });
+  }
+
+  // Funzione per gestire l'azione di eliminazione
+  public deleteButton = [
+    {
+      text: 'No',
+      role: 'cancel',
+      handler: () => {
+        // Gestisci la chiusura dell'alert se necessario
+        console.log('Eliminazione annullata');
+        this.closeModalAzioni(); // Chiudi il modale
+      },
+    },
+    {
+      text: 'Elimina',
+      role: 'confirm',
+      handler: async () => {
+        try {
+          // Esegui la cancellazione
+          await this.speseService
+            .deleteAzione(this.selectedSpesa.id)
+            .toPromise();
+          // Ricarica i dati se necessario
+          const mese = this.meseList.find(
+            (m) =>
+              m.numeroMese === Number(this.selectedSpesa.mese) &&
+              m.anno === this.selectedSpesa.anno
+          );
+          if (mese) {
+            this.loadSpese(mese);
+            this.loadTotali();
+            this.closeModalAzioni(); // Chiudi il modale dopo l'eliminazione
+          } else {
+            console.error('Errore: mese non definito per questa spesa.');
+          }
+        } catch (error) {
+          console.error("Errore durante la cancellazione dell'azione:", error);
+        }
+      },
+    },
+  ];
+
+  // Funzione per gestire il refresh
+  doRefresh(event: CustomEvent<RefresherEventDetail>) {
+    console.log('Refresh in corso...');
+    setTimeout(() => {
+      // Ricarica i dati
+      this.ngOnInit();
+      event.detail.complete(); // Completa il refresh
+    }, 2000); // Simuliamo un ritardo di 2 secondi
+  }
 }
