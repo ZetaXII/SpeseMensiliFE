@@ -4,6 +4,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   Inject,
   Renderer2,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -35,7 +36,8 @@ import {
   ToastController,
   IonRefresher,  
   RefresherEventDetail,
-  IonRefresherContent
+  IonRefresherContent,
+  IonAlert
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -102,7 +104,8 @@ export interface Mese {
     ReactiveFormsModule,
     IonLoading,
     IonRefresher,
-    IonRefresherContent
+    IonRefresherContent,
+    IonAlert
   ],
   providers: [ModalController],
 })
@@ -144,6 +147,7 @@ export class HomePage {
     private fb: FormBuilder,
     private toastController: ToastController,
     private renderer: Renderer2,
+    private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document
   ) {
     addIcons({
@@ -637,6 +641,7 @@ export class HomePage {
   // Funzione per chiudere il modale
   closeModalAzioni() {
     this.isModalAzioniOpen = false;
+    this.cdr.detectChanges(); // Forza il refresh dell'interfaccia
   }
 
   // Funzione per gestire l'azione di modifica
